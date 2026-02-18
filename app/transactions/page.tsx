@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
+import AddTransactionModal from "../components/dashboard/AddTransactionModal";
+import { useToast } from "../components/ui/Toast";
 import type { Transaction } from "../lib/types";
 
 const categories = ["All", "Salary", "Investment", "Housing", "Utilities", "Shopping", "Food & Dining", "Freelance", "Entertainment", "Transport", "Groceries", "Health"];
@@ -32,17 +34,12 @@ function groupByDate(txns: Transaction[]) {
 }
 
 export default function TransactionsPage() {
+  const { toast } = useToast();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");
   const [typeFilter, setTypeFilter] = useState<"all" | "income" | "expense">("all");
   const [search, setSearch] = useState("");
-
-  useEffect(() => {
-    // TODO: Replace with API call — e.g. fetch("/api/transactions")
-    setTransactions([]);
-    setLoading(false);
-  }, []);
+  const [addOpen, setAddOpen] = useState(false);
 
   const filtered = transactions.filter((t) => {
     if (filter !== "All" && t.category !== filter) return false;
@@ -52,9 +49,17 @@ export default function TransactionsPage() {
   });
 
   const grouped = groupByDate(filtered);
-
   const totalIncome = filtered.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0);
   const totalExpense = filtered.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
+
+  const addTransaction = (t: Transaction) => {
+    setTransactions((prev) => [t, ...prev]);
+  };
+
+  const removeTransaction = (id: string) => {
+    setTransactions((prev) => prev.filter((t) => t.id !== id));
+    toast("Transaction deleted", "info");
+  };
 
   return (
     <DashboardLayout>
@@ -73,6 +78,7 @@ export default function TransactionsPage() {
           </div>
           <button
             type="button"
+            onClick={() => setAddOpen(true)}
             className="mt-4 flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-emerald-500 sm:mt-0"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
@@ -80,33 +86,23 @@ export default function TransactionsPage() {
           </button>
         </div>
 
-        {/* Summary strip */}
         <div className="grid gap-4 sm:grid-cols-3">
-          {loading ? (
-            [1, 2, 3].map((i) => (
-              <div key={i} className="h-20 animate-pulse rounded-xl border border-zinc-800 bg-zinc-900" />
-            ))
-          ) : (
-            <>
-              <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4">
-                <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Total Income</p>
-                <p className="mt-1 text-xl font-bold tabular-nums text-emerald-400">{formatCurrency(totalIncome)}</p>
-              </div>
-              <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4">
-                <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Total Expenses</p>
-                <p className="mt-1 text-xl font-bold tabular-nums text-red-400">{formatCurrency(totalExpense)}</p>
-              </div>
-              <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4">
-                <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Net Flow</p>
-                <p className={`mt-1 text-xl font-bold tabular-nums ${totalIncome - totalExpense >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                  {totalIncome - totalExpense >= 0 ? "+" : ""}{formatCurrency(totalIncome - totalExpense)}
-                </p>
-              </div>
-            </>
-          )}
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4">
+            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Total Income</p>
+            <p className="mt-1 text-xl font-bold tabular-nums text-emerald-400">{formatCurrency(totalIncome)}</p>
+          </div>
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4">
+            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Total Expenses</p>
+            <p className="mt-1 text-xl font-bold tabular-nums text-red-400">{formatCurrency(totalExpense)}</p>
+          </div>
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4">
+            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Net Flow</p>
+            <p className={`mt-1 text-xl font-bold tabular-nums ${totalIncome - totalExpense >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+              {totalIncome - totalExpense >= 0 ? "+" : ""}{formatCurrency(totalIncome - totalExpense)}
+            </p>
+          </div>
         </div>
 
-        {/* Filters */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative flex-1">
             <svg className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
@@ -132,7 +128,6 @@ export default function TransactionsPage() {
           </div>
         </div>
 
-        {/* Category pills */}
         <div className="flex flex-wrap gap-2">
           {categories.map((c) => (
             <button
@@ -146,14 +141,7 @@ export default function TransactionsPage() {
           ))}
         </div>
 
-        {/* Transaction list */}
-        {loading ? (
-          <div className="space-y-3">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-16 animate-pulse rounded-xl border border-zinc-800 bg-zinc-900" />
-            ))}
-          </div>
-        ) : grouped.length > 0 ? (
+        {grouped.length > 0 ? (
           <div className="space-y-6">
             {grouped.map(([date, txns]) => (
               <div key={date}>
@@ -164,7 +152,7 @@ export default function TransactionsPage() {
                       key={t.id}
                       className="group flex items-center gap-4 rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4 transition-colors hover:border-zinc-700"
                     >
-                      <div className={`h-9 w-9 shrink-0 rounded-lg ${t.categoryColor}/15 flex items-center justify-center`}>
+                      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${t.categoryColor}/15`}>
                         <div className={`h-2.5 w-2.5 rounded-full ${t.categoryColor}`} />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -176,6 +164,14 @@ export default function TransactionsPage() {
                       <p className={`text-sm font-bold tabular-nums ${t.type === "income" ? "text-emerald-400" : "text-zinc-200"}`}>
                         {t.type === "income" ? "+" : "-"}{formatCurrency(t.amount)}
                       </p>
+                      <button
+                        type="button"
+                        onClick={() => removeTransaction(t.id)}
+                        className="rounded-lg p-2 text-zinc-600 opacity-0 transition-all hover:bg-zinc-800 hover:text-red-400 group-hover:opacity-100"
+                        aria-label="Delete"
+                      >
+                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -187,9 +183,18 @@ export default function TransactionsPage() {
             <svg className="h-10 w-10 text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>
             <p className="mt-3 text-sm font-medium text-zinc-400">No transactions yet</p>
             <p className="mt-1 text-xs text-zinc-600">Add your first transaction to start tracking</p>
+            <button
+              type="button"
+              onClick={() => setAddOpen(true)}
+              className="mt-4 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
+            >
+              Add transaction
+            </button>
           </div>
         )}
       </div>
+
+      <AddTransactionModal open={addOpen} onClose={() => setAddOpen(false)} onAdd={addTransaction} />
     </DashboardLayout>
   );
 }

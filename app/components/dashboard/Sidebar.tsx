@@ -25,17 +25,30 @@ function NavIcon({ d, active }: { d: string; active?: boolean }) {
   );
 }
 
-export default function Sidebar() {
+export default function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
   const pathname = usePathname();
-
   const isActive = (href: string) => href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-52 flex-col border-r border-zinc-800/80 bg-zinc-950">
-      <div className="flex h-14 items-center gap-2.5 border-b border-zinc-800/80 px-5">
+    <aside
+      className={`fixed left-0 top-0 z-50 flex h-screen w-52 flex-col border-r border-zinc-800/80 bg-zinc-950 transition-transform duration-200 lg:translate-x-0 ${
+        open ? "translate-x-0" : "-translate-x-full"
+      }`}
+    >
+      <div className="flex h-14 items-center justify-between border-b border-zinc-800/80 px-5">
         <span className="text-lg font-bold tracking-tight text-white" style={{ fontFamily: "var(--font-geist-mono), ui-monospace, monospace" }}>
           KeX<span className="text-emerald-400">Pay</span>
         </span>
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-800 hover:text-white lg:hidden"
+          aria-label="Close sidebar"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
       <nav className="flex flex-1 flex-col gap-1 px-3 py-4">
         {navItems.map((item) => {
@@ -44,6 +57,7 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onClose}
               className={`relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all ${active ? "bg-zinc-800/80 text-white" : "text-zinc-500 hover:bg-zinc-900 hover:text-zinc-300"}`}
             >
               {active && <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r bg-emerald-500" />}
@@ -60,6 +74,7 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onClose}
               className={`relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all ${active ? "bg-zinc-800/80 text-white" : "text-zinc-500 hover:bg-zinc-900 hover:text-zinc-300"}`}
             >
               {active && <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r bg-emerald-500" />}

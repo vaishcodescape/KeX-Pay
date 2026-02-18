@@ -1,7 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import type { ChartPoint } from "../../lib/types";
+import { useState } from "react";
+import type { Transaction, ChartPoint } from "../../lib/types";
+import Dropdown, { DropdownItem } from "../ui/Dropdown";
+
+function transactionsToChart(transactions: Transaction[]): ChartPoint[] {
+  const byDate: Record<string, number> = {};
+  const sorted = [...transactions].sort((a, b) => a.date.localeCompare(b.date));
+
+  let runningBalance = 0;
+  for (const t of sorted) {
+    runningBalance += t.type === "income" ? t.amount : -t.amount;
+    byDate[t.date] = runningBalance;
+  }
+
+  return Object.entries(byDate).map(([date, value]) => ({
+    month: new Date(date + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    value,
+  }));
+}
 
 function toPath(data: ChartPoint[], min: number, range: number) {
   const w = 100;
@@ -14,42 +31,49 @@ function toPath(data: ChartPoint[], min: number, range: number) {
   return `M ${points.join(" L ")} L 100,64 L 0,64 Z`;
 }
 
-export default function SpendingChart() {
-  const [data, setData] = useState<ChartPoint[]>([]);
-  const [loading, setLoading] = useState(true);
+const periodOptions = ["This quarter", "Last quarter", "Last 6 months", "This year"];
 
-  useEffect(() => {
-    // TODO: Replace with API call — e.g. fetch("/api/dashboard/cashflow")
-    setData([]);
-    setLoading(false);
-  }, []);
+export default function SpendingChart({ transactions = [] }: { transactions?: Transaction[] }) {
+  const [period, setPeriod] = useState("This quarter");
+  const data = transactionsToChart(transactions);
 
   const hasData = data.length >= 2;
   const min = hasData ? Math.min(...data.map((d) => d.value)) : 0;
   const max = hasData ? Math.max(...data.map((d) => d.value)) : 1;
   const range = max - min || 1;
 
+  const totalIncome = transactions.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0);
+  const totalExpense = transactions.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
+
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-base font-semibold text-white">Cash flow</h3>
-          <p className="mt-0.5 text-sm text-zinc-400">Income vs expenses this quarter</p>
+          <p className="mt-0.5 text-sm text-zinc-400">
+            {hasData
+              ? `₹${totalIncome.toLocaleString("en-IN")} in · ₹${totalExpense.toLocaleString("en-IN")} out`
+              : "Income vs expenses this quarter"
+            }
+          </p>
         </div>
-        <button
-          type="button"
-          className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800/50 px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800"
+        <Dropdown
+          trigger={
+            <button type="button" className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800/50 px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800">
+              {period}
+              <svg className="h-4 w-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </button>
+          }
         >
-          This quarter
-          <svg className="h-4 w-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
+          {periodOptions.map((p) => (
+            <DropdownItem key={p} onClick={() => setPeriod(p)}>
+              <span className={p === period ? "text-emerald-400" : ""}>{p}</span>
+            </DropdownItem>
+          ))}
+        </Dropdown>
       </div>
 
-      {loading ? (
-        <div className="mt-6 h-48 animate-pulse rounded-lg bg-zinc-800/50" />
-      ) : hasData ? (
+      {hasData ? (
         <>
           <div className="mt-6 h-48 w-full">
             <svg viewBox="0 0 100 64" className="h-full w-full" preserveAspectRatio="none">
@@ -61,17 +85,18 @@ export default function SpendingChart() {
               </defs>
               <path fill="url(#chartGrad)" stroke="none" d={toPath(data, min, range)} />
               <path
-                fill="none"
-                stroke="#10b981"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                fill="none" stroke="#10b981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
                 d={data.map((item, i) => {
                   const x = (i / (data.length - 1)) * 100;
                   const y = 60 - ((item.value - min) / range) * 52 - 4;
                   return `${i === 0 ? "M" : "L"} ${x},${y}`;
                 }).join(" ")}
               />
+              {data.map((item, i) => {
+                const x = (i / (data.length - 1)) * 100;
+                const y = 60 - ((item.value - min) / range) * 52 - 4;
+                return <circle key={i} cx={x} cy={y} r="1.5" fill="#10b981" className="transition-all" />;
+              })}
             </svg>
           </div>
           <div className="flex justify-between border-t border-zinc-800 pt-3 text-xs text-zinc-500">

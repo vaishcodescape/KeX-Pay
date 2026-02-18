@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
+import Dropdown, { DropdownItem } from "../components/ui/Dropdown";
+import { useToast } from "../components/ui/Toast";
 import type { MonthlyData, CategoryBreakdown, MerchantSummary } from "../lib/types";
 
 function formatCurrency(n: number) {
@@ -10,20 +12,11 @@ function formatCurrency(n: number) {
 }
 
 export default function ReportsPage() {
+  const { toast } = useToast();
   const [period, setPeriod] = useState<"monthly" | "quarterly">("monthly");
-  const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);
-  const [categories, setCategories] = useState<CategoryBreakdown[]>([]);
-  const [merchants, setMerchants] = useState<MerchantSummary[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // TODO: Replace with API calls
-    // e.g. fetch("/api/reports/monthly"), fetch("/api/reports/categories"), fetch("/api/reports/merchants")
-    setMonthlyData([]);
-    setCategories([]);
-    setMerchants([]);
-    setLoading(false);
-  }, [period]);
+  const [monthlyData] = useState<MonthlyData[]>([]);
+  const [categories] = useState<CategoryBreakdown[]>([]);
+  const [merchants] = useState<MerchantSummary[]>([]);
 
   const currentMonth = monthlyData[monthlyData.length - 1];
   const prevMonth = monthlyData.length >= 2 ? monthlyData[monthlyData.length - 2] : null;
@@ -37,6 +30,14 @@ export default function ReportsPage() {
     : 0;
 
   const hasData = monthlyData.length > 0;
+
+  const handleExport = () => {
+    if (!hasData) {
+      toast("No report data to export yet", "info");
+      return;
+    }
+    toast("PDF export started (demo)", "success");
+  };
 
   return (
     <DashboardLayout>
@@ -66,6 +67,7 @@ export default function ReportsPage() {
             ))}
             <button
               type="button"
+              onClick={handleExport}
               className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800/50 px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-800"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
@@ -74,18 +76,8 @@ export default function ReportsPage() {
           </div>
         </div>
 
-        {loading ? (
+        {hasData ? (
           <>
-            <div className="grid gap-4 sm:grid-cols-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-20 animate-pulse rounded-xl border border-zinc-800 bg-zinc-900" />
-              ))}
-            </div>
-            <div className="h-64 animate-pulse rounded-xl border border-zinc-800 bg-zinc-900" />
-          </>
-        ) : hasData ? (
-          <>
-            {/* Summary stats */}
             <div className="grid gap-4 sm:grid-cols-4">
               <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4">
                 <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Income</p>
@@ -108,7 +100,6 @@ export default function ReportsPage() {
             </div>
 
             <div className="grid gap-6 lg:grid-cols-5">
-              {/* Income vs Expense chart */}
               <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5 lg:col-span-3">
                 <h3 className="text-sm font-semibold text-white">Income vs Expenses</h3>
                 <p className="mt-0.5 text-xs text-zinc-500">6-month comparison</p>
@@ -118,11 +109,11 @@ export default function ReportsPage() {
                       <span className="w-8 text-xs font-medium text-zinc-500">{d.month}</span>
                       <div className="flex-1 space-y-1">
                         <div className="flex items-center gap-2">
-                          <div className="h-2 rounded-full bg-emerald-500/80" style={{ width: `${(d.income / maxValue) * 100}%` }} />
+                          <div className="h-2 rounded-full bg-emerald-500/80 transition-all duration-500" style={{ width: `${(d.income / maxValue) * 100}%` }} />
                           <span className="text-xs tabular-nums text-zinc-400">{formatCurrency(d.income)}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="h-2 rounded-full bg-zinc-600" style={{ width: `${(d.expense / maxValue) * 100}%` }} />
+                          <div className="h-2 rounded-full bg-zinc-600 transition-all duration-500" style={{ width: `${(d.expense / maxValue) * 100}%` }} />
                           <span className="text-xs tabular-nums text-zinc-500">{formatCurrency(d.expense)}</span>
                         </div>
                       </div>
@@ -130,36 +121,21 @@ export default function ReportsPage() {
                   ))}
                 </div>
                 <div className="mt-4 flex gap-4 border-t border-zinc-800 pt-3">
-                  <div className="flex items-center gap-2 text-xs text-zinc-400">
-                    <div className="h-2 w-6 rounded-full bg-emerald-500/80" />
-                    Income
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-zinc-500">
-                    <div className="h-2 w-6 rounded-full bg-zinc-600" />
-                    Expenses
-                  </div>
+                  <div className="flex items-center gap-2 text-xs text-zinc-400"><div className="h-2 w-6 rounded-full bg-emerald-500/80" />Income</div>
+                  <div className="flex items-center gap-2 text-xs text-zinc-500"><div className="h-2 w-6 rounded-full bg-zinc-600" />Expenses</div>
                 </div>
               </div>
 
-              {/* Category breakdown */}
               <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5 lg:col-span-2">
                 <h3 className="text-sm font-semibold text-white">By Category</h3>
                 <p className="mt-0.5 text-xs text-zinc-500">Where your money goes</p>
-
                 <div className="mt-4 flex justify-center">
                   <div className="relative h-32 w-32">
                     <svg className="h-full w-full -rotate-90" viewBox="0 0 36 36">
                       {categories.reduce<{ elements: React.ReactNode[]; offset: number }>((acc, cat, i) => {
                         const dash = cat.percent * 0.88;
                         acc.elements.push(
-                          <circle
-                            key={i}
-                            cx="18" cy="18" r="14" fill="none"
-                            stroke={cat.color}
-                            strokeWidth="3"
-                            strokeDasharray={`${dash} ${88 - dash}`}
-                            strokeDashoffset={-acc.offset}
-                          />
+                          <circle key={i} cx="18" cy="18" r="14" fill="none" stroke={cat.color} strokeWidth="3" strokeDasharray={`${dash} ${88 - dash}`} strokeDashoffset={-acc.offset} />
                         );
                         acc.offset += dash;
                         return acc;
@@ -171,7 +147,6 @@ export default function ReportsPage() {
                     </span>
                   </div>
                 </div>
-
                 <div className="mt-4 space-y-2.5">
                   {categories.map((cat) => (
                     <div key={cat.name} className="flex items-center gap-3">
@@ -184,7 +159,6 @@ export default function ReportsPage() {
               </div>
             </div>
 
-            {/* Top merchants */}
             {merchants.length > 0 && (
               <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
                 <h3 className="text-sm font-semibold text-white">Top Merchants</h3>
@@ -209,6 +183,9 @@ export default function ReportsPage() {
             <svg className="h-10 w-10 text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
             <p className="mt-3 text-sm font-medium text-zinc-400">No report data yet</p>
             <p className="mt-1 text-xs text-zinc-600">Add transactions to generate spending insights and trends</p>
+            <Link href="/transactions" className="mt-4 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500">
+              Go to Transactions
+            </Link>
           </div>
         )}
       </div>

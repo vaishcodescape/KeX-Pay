@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { useState } from "react";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
+import Modal from "../components/ui/Modal";
+import Dropdown, { DropdownItem } from "../components/ui/Dropdown";
+import { useToast } from "../components/ui/Toast";
 
 function Toggle({ enabled, onToggle }: { enabled: boolean; onToggle: () => void }) {
   return (
@@ -10,18 +13,56 @@ function Toggle({ enabled, onToggle }: { enabled: boolean; onToggle: () => void 
       type="button"
       onClick={onToggle}
       className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${enabled ? "bg-emerald-600" : "bg-zinc-700"}`}
+      role="switch"
+      aria-checked={enabled}
     >
       <span className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${enabled ? "translate-x-5" : "translate-x-0"}`} />
     </button>
   );
 }
 
+const currencies = ["Indian Rupee (₹)", "US Dollar ($)", "Euro (€)", "British Pound (£)"];
+const dateFormats = ["DD/MM/YYYY", "MM/DD/YYYY", "YYYY-MM-DD"];
+const weekStarts = ["Monday", "Sunday", "Saturday"];
+
 export default function SettingsPage() {
+  const { toast } = useToast();
+
+  const [name, setName] = useState("User");
+  const [email, setEmail] = useState("user@example.com");
+  const [phone, setPhone] = useState("+91 98765 43210");
+  const [location, setLocation] = useState("Mumbai, India");
+  const [saving, setSaving] = useState(false);
+
+  const [currency, setCurrency] = useState(currencies[0]);
+  const [dateFormat, setDateFormat] = useState(dateFormats[0]);
+  const [weekStart, setWeekStart] = useState(weekStarts[0]);
+
   const [notifications, setNotifications] = useState(true);
   const [budgetAlerts, setBudgetAlerts] = useState(true);
   const [weeklyDigest, setWeeklyDigest] = useState(false);
+
   const [twoFactor, setTwoFactor] = useState(false);
   const [biometric, setBiometric] = useState(true);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+  const handleSaveProfile = () => {
+    setSaving(true);
+    setTimeout(() => {
+      setSaving(false);
+      toast("Profile saved successfully", "success");
+    }, 600);
+  };
+
+  const handleExportData = () => {
+    toast("Preparing data export...", "info");
+    setTimeout(() => toast("Data exported as JSON", "success"), 1000);
+  };
+
+  const handleImportData = () => {
+    toast("Import feature coming soon", "info");
+  };
 
   return (
     <DashboardLayout>
@@ -38,55 +79,43 @@ export default function SettingsPage() {
           <p className="mt-0.5 text-sm text-zinc-400">Manage your account preferences</p>
         </div>
 
-        {/* Profile section */}
+        {/* Profile */}
         <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
           <h2 className="text-sm font-semibold text-white">Profile</h2>
           <p className="mt-0.5 text-xs text-zinc-500">Your personal information</p>
           <div className="mt-6 flex items-start gap-6">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-emerald-600/80 text-xl font-bold text-white">U</div>
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-emerald-600/80 text-xl font-bold text-white">
+              {name.charAt(0).toUpperCase()}
+            </div>
             <div className="flex-1 space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="block text-xs font-medium text-zinc-400">Full name</label>
-                  <input
-                    type="text"
-                    defaultValue="User"
-                    className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white outline-none transition-colors focus:border-zinc-600"
-                  />
+                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white outline-none transition-colors focus:border-zinc-600" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-zinc-400">Email</label>
-                  <input
-                    type="email"
-                    defaultValue="user@example.com"
-                    className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white outline-none transition-colors focus:border-zinc-600"
-                  />
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white outline-none transition-colors focus:border-zinc-600" />
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="block text-xs font-medium text-zinc-400">Phone</label>
-                  <input
-                    type="tel"
-                    defaultValue="+91 98765 43210"
-                    className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white outline-none transition-colors focus:border-zinc-600"
-                  />
+                  <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white outline-none transition-colors focus:border-zinc-600" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-zinc-400">Location</label>
-                  <input
-                    type="text"
-                    defaultValue="Mumbai, India"
-                    className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white outline-none transition-colors focus:border-zinc-600"
-                  />
+                  <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white outline-none transition-colors focus:border-zinc-600" />
                 </div>
               </div>
               <div className="flex justify-end">
                 <button
                   type="button"
-                  className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
+                  onClick={handleSaveProfile}
+                  disabled={saving}
+                  className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500 disabled:opacity-50"
                 >
-                  Save changes
+                  {saving ? "Saving..." : "Save changes"}
                 </button>
               </div>
             </div>
@@ -100,18 +129,57 @@ export default function SettingsPage() {
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             <div>
               <label className="block text-xs font-medium text-zinc-400">Currency</label>
-              <div className="mt-1.5 flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white">
-                <span>🇮🇳</span>
-                <span>Indian Rupee (₹)</span>
-              </div>
+              <Dropdown
+                align="left"
+                trigger={
+                  <div className="mt-1.5 flex cursor-pointer items-center justify-between rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white hover:border-zinc-700">
+                    <span>{currency}</span>
+                    <svg className="h-4 w-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                  </div>
+                }
+              >
+                {currencies.map((c) => (
+                  <DropdownItem key={c} onClick={() => { setCurrency(c); toast(`Currency set to ${c}`, "success"); }}>
+                    <span className={c === currency ? "text-emerald-400" : ""}>{c}</span>
+                  </DropdownItem>
+                ))}
+              </Dropdown>
             </div>
             <div>
               <label className="block text-xs font-medium text-zinc-400">Date format</label>
-              <div className="mt-1.5 rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white">DD/MM/YYYY</div>
+              <Dropdown
+                align="left"
+                trigger={
+                  <div className="mt-1.5 flex cursor-pointer items-center justify-between rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white hover:border-zinc-700">
+                    <span>{dateFormat}</span>
+                    <svg className="h-4 w-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                  </div>
+                }
+              >
+                {dateFormats.map((f) => (
+                  <DropdownItem key={f} onClick={() => { setDateFormat(f); toast(`Date format: ${f}`, "success"); }}>
+                    <span className={f === dateFormat ? "text-emerald-400" : ""}>{f}</span>
+                  </DropdownItem>
+                ))}
+              </Dropdown>
             </div>
             <div>
               <label className="block text-xs font-medium text-zinc-400">Start of week</label>
-              <div className="mt-1.5 rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white">Monday</div>
+              <Dropdown
+                align="left"
+                trigger={
+                  <div className="mt-1.5 flex cursor-pointer items-center justify-between rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white hover:border-zinc-700">
+                    <span>{weekStart}</span>
+                    <svg className="h-4 w-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                  </div>
+                }
+              >
+                {weekStarts.map((w) => (
+                  <DropdownItem key={w} onClick={() => { setWeekStart(w); toast(`Week starts on ${w}`, "success"); }}>
+                    <span className={w === weekStart ? "text-emerald-400" : ""}>{w}</span>
+                  </DropdownItem>
+                ))}
+              </Dropdown>
             </div>
           </div>
         </div>
@@ -122,25 +190,16 @@ export default function SettingsPage() {
           <p className="mt-0.5 text-xs text-zinc-500">Control how you receive alerts</p>
           <div className="mt-6 divide-y divide-zinc-800">
             <div className="flex items-center justify-between py-4 first:pt-0">
-              <div>
-                <p className="text-sm font-medium text-zinc-200">Push notifications</p>
-                <p className="text-xs text-zinc-500">Get notified about new transactions</p>
-              </div>
-              <Toggle enabled={notifications} onToggle={() => setNotifications(!notifications)} />
+              <div><p className="text-sm font-medium text-zinc-200">Push notifications</p><p className="text-xs text-zinc-500">Get notified about new transactions</p></div>
+              <Toggle enabled={notifications} onToggle={() => { setNotifications(!notifications); toast(notifications ? "Push notifications off" : "Push notifications on", "info"); }} />
             </div>
             <div className="flex items-center justify-between py-4">
-              <div>
-                <p className="text-sm font-medium text-zinc-200">Budget alerts</p>
-                <p className="text-xs text-zinc-500">Warn when spending exceeds 80% of budget</p>
-              </div>
-              <Toggle enabled={budgetAlerts} onToggle={() => setBudgetAlerts(!budgetAlerts)} />
+              <div><p className="text-sm font-medium text-zinc-200">Budget alerts</p><p className="text-xs text-zinc-500">Warn when spending exceeds 80% of budget</p></div>
+              <Toggle enabled={budgetAlerts} onToggle={() => { setBudgetAlerts(!budgetAlerts); toast(budgetAlerts ? "Budget alerts off" : "Budget alerts on", "info"); }} />
             </div>
             <div className="flex items-center justify-between py-4 last:pb-0">
-              <div>
-                <p className="text-sm font-medium text-zinc-200">Weekly digest</p>
-                <p className="text-xs text-zinc-500">Summary of spending every Sunday evening</p>
-              </div>
-              <Toggle enabled={weeklyDigest} onToggle={() => setWeeklyDigest(!weeklyDigest)} />
+              <div><p className="text-sm font-medium text-zinc-200">Weekly digest</p><p className="text-xs text-zinc-500">Summary of spending every Sunday evening</p></div>
+              <Toggle enabled={weeklyDigest} onToggle={() => { setWeeklyDigest(!weeklyDigest); toast(weeklyDigest ? "Weekly digest off" : "Weekly digest on", "info"); }} />
             </div>
           </div>
         </div>
@@ -151,30 +210,16 @@ export default function SettingsPage() {
           <p className="mt-0.5 text-xs text-zinc-500">Protect your account</p>
           <div className="mt-6 divide-y divide-zinc-800">
             <div className="flex items-center justify-between py-4 first:pt-0">
-              <div>
-                <p className="text-sm font-medium text-zinc-200">Two-factor authentication</p>
-                <p className="text-xs text-zinc-500">Add an extra layer of security with OTP</p>
-              </div>
-              <Toggle enabled={twoFactor} onToggle={() => setTwoFactor(!twoFactor)} />
+              <div><p className="text-sm font-medium text-zinc-200">Two-factor authentication</p><p className="text-xs text-zinc-500">Add an extra layer of security with OTP</p></div>
+              <Toggle enabled={twoFactor} onToggle={() => { setTwoFactor(!twoFactor); toast(twoFactor ? "2FA disabled" : "2FA enabled", twoFactor ? "info" : "success"); }} />
             </div>
             <div className="flex items-center justify-between py-4">
-              <div>
-                <p className="text-sm font-medium text-zinc-200">Biometric login</p>
-                <p className="text-xs text-zinc-500">Use fingerprint or face recognition</p>
-              </div>
-              <Toggle enabled={biometric} onToggle={() => setBiometric(!biometric)} />
+              <div><p className="text-sm font-medium text-zinc-200">Biometric login</p><p className="text-xs text-zinc-500">Use fingerprint or face recognition</p></div>
+              <Toggle enabled={biometric} onToggle={() => { setBiometric(!biometric); toast(biometric ? "Biometric login off" : "Biometric login on", "info"); }} />
             </div>
             <div className="flex items-center justify-between py-4 last:pb-0">
-              <div>
-                <p className="text-sm font-medium text-zinc-200">Change password</p>
-                <p className="text-xs text-zinc-500">Last changed 45 days ago</p>
-              </div>
-              <button
-                type="button"
-                className="rounded-lg border border-zinc-700 px-3.5 py-2 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
-              >
-                Update
-              </button>
+              <div><p className="text-sm font-medium text-zinc-200">Change password</p><p className="text-xs text-zinc-500">Last changed 45 days ago</p></div>
+              <button type="button" onClick={() => setPasswordModalOpen(true)} className="rounded-lg border border-zinc-700 px-3.5 py-2 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800">Update</button>
             </div>
           </div>
         </div>
@@ -184,30 +229,68 @@ export default function SettingsPage() {
           <h2 className="text-sm font-semibold text-white">Data & Privacy</h2>
           <p className="mt-0.5 text-xs text-zinc-500">Your data, your control</p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <button
-              type="button"
-              className="flex items-center gap-2 rounded-lg border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
-            >
+            <button type="button" onClick={handleExportData} className="flex items-center gap-2 rounded-lg border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800">
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
               Export all data
             </button>
-            <button
-              type="button"
-              className="flex items-center gap-2 rounded-lg border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
-            >
+            <button type="button" onClick={handleImportData} className="flex items-center gap-2 rounded-lg border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800">
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
               Import data
             </button>
-            <button
-              type="button"
-              className="flex items-center gap-2 rounded-lg border border-red-900/50 px-4 py-2.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-950/30"
-            >
+            <button type="button" onClick={() => setDeleteModalOpen(true)} className="flex items-center gap-2 rounded-lg border border-red-900/50 px-4 py-2.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-950/30">
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
               Delete account
             </button>
           </div>
         </div>
       </div>
+
+      {/* Password modal */}
+      <Modal open={passwordModalOpen} onClose={() => setPasswordModalOpen(false)} title="Change Password">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            setPasswordModalOpen(false);
+            toast("Password updated successfully", "success");
+          }}
+          className="space-y-4"
+        >
+          <div>
+            <label className="block text-xs font-medium text-zinc-400">Current password</label>
+            <input type="password" placeholder="••••••••" className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-zinc-600" required />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-zinc-400">New password</label>
+            <input type="password" placeholder="••••••••" className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-zinc-600" required />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-zinc-400">Confirm new password</label>
+            <input type="password" placeholder="••••••••" className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-zinc-600" required />
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={() => setPasswordModalOpen(false)} className="flex-1 rounded-lg border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800">Cancel</button>
+            <button type="submit" className="flex-1 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-emerald-500">Update password</button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Delete account modal */}
+      <Modal open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} title="Delete Account">
+        <div className="space-y-4">
+          <div className="rounded-lg border border-red-900/50 bg-red-950/20 p-4">
+            <p className="text-sm font-medium text-red-400">This action is irreversible</p>
+            <p className="mt-1 text-xs text-red-400/70">All your data, including accounts, transactions, budgets, and goals will be permanently deleted.</p>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-zinc-400">Type &ldquo;DELETE&rdquo; to confirm</label>
+            <input type="text" placeholder="DELETE" className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-red-600" />
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={() => setDeleteModalOpen(false)} className="flex-1 rounded-lg border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800">Cancel</button>
+            <button type="button" onClick={() => { setDeleteModalOpen(false); toast("Account deletion cancelled (demo mode)", "info"); }} className="flex-1 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-red-500">Delete account</button>
+          </div>
+        </div>
+      </Modal>
     </DashboardLayout>
   );
 }

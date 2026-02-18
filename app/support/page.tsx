@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
+import { useToast } from "../components/ui/Toast";
 
 const faqs = [
   {
@@ -32,8 +33,24 @@ const faqs = [
 ];
 
 export default function SupportPage() {
+  const { toast } = useToast();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const handleSend = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!subject.trim() || !message.trim()) return;
+
+    setSending(true);
+    setTimeout(() => {
+      setSending(false);
+      toast("Message sent! We'll reply within 24 hours.", "success");
+      setSubject("");
+      setMessage("");
+    }, 800);
+  };
 
   return (
     <DashboardLayout>
@@ -51,7 +68,6 @@ export default function SupportPage() {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-5">
-          {/* FAQ */}
           <div className="lg:col-span-3">
             <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
               <h2 className="text-sm font-semibold text-white">Frequently Asked Questions</h2>
@@ -64,19 +80,23 @@ export default function SupportPage() {
                       <button
                         type="button"
                         onClick={() => setOpenFaq(isOpen ? null : i)}
-                        className="flex w-full items-start justify-between gap-4 text-left"
+                        className="flex w-full items-start justify-between gap-4 text-left cursor-pointer"
                       >
                         <span className="text-sm font-medium text-zinc-200">{faq.q}</span>
                         <svg
-                          className={`mt-0.5 h-4 w-4 shrink-0 text-zinc-500 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                          className={`mt-0.5 h-4 w-4 shrink-0 text-zinc-500 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
                           fill="none" viewBox="0 0 24 24" stroke="currentColor"
                         >
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                       </button>
-                      {isOpen && (
-                        <p className="mt-3 text-sm leading-relaxed text-zinc-400">{faq.a}</p>
-                      )}
+                      <div
+                        className={`grid transition-all duration-200 ${isOpen ? "grid-rows-[1fr] mt-3" : "grid-rows-[0fr]"}`}
+                      >
+                        <div className="overflow-hidden">
+                          <p className="text-sm leading-relaxed text-zinc-400">{faq.a}</p>
+                        </div>
+                      </div>
                     </div>
                   );
                 })}
@@ -84,19 +104,20 @@ export default function SupportPage() {
             </div>
           </div>
 
-          {/* Contact + Quick links */}
           <div className="space-y-6 lg:col-span-2">
-            {/* Contact form */}
             <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
               <h2 className="text-sm font-semibold text-white">Send a Message</h2>
               <p className="mt-0.5 text-xs text-zinc-500">We typically reply within 24 hours</p>
-              <div className="mt-5 space-y-4">
+              <form onSubmit={handleSend} className="mt-5 space-y-4">
                 <div>
                   <label className="block text-xs font-medium text-zinc-400">Subject</label>
                   <input
                     type="text"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
                     placeholder="What's this about?"
                     className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-zinc-600"
+                    required
                   />
                 </div>
                 <div>
@@ -107,18 +128,19 @@ export default function SupportPage() {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     className="mt-1.5 w-full resize-none rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-zinc-600"
+                    required
                   />
                 </div>
                 <button
-                  type="button"
-                  className="w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
+                  type="submit"
+                  disabled={sending}
+                  className="w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-emerald-500 disabled:opacity-50"
                 >
-                  Send message
+                  {sending ? "Sending..." : "Send message"}
                 </button>
-              </div>
+              </form>
             </div>
 
-            {/* Quick links */}
             <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
               <h2 className="text-sm font-semibold text-white">Quick Links</h2>
               <div className="mt-4 space-y-2">
@@ -131,7 +153,8 @@ export default function SupportPage() {
                   <button
                     key={link.label}
                     type="button"
-                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-zinc-800"
+                    onClick={() => toast(`Opening ${link.label}...`, "info")}
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-zinc-800 cursor-pointer"
                   >
                     <svg className="h-4 w-4 shrink-0 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
                       <path strokeLinecap="round" strokeLinejoin="round" d={link.icon} />
