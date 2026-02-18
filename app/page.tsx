@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import DashboardLayout from "./components/dashboard/DashboardLayout";
 import GreetingCard from "./components/dashboard/GreetingCard";
@@ -6,6 +9,7 @@ import QuickTransactions from "./components/dashboard/QuickTransactions";
 import CalendarWidget from "./components/dashboard/CalendarWidget";
 import InsightsWidget from "./components/dashboard/InsightsWidget";
 import SpendingChart from "./components/dashboard/SpendingChart";
+import type { MetricData } from "./lib/types";
 
 const walletIcon = (
   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -28,11 +32,21 @@ const savingsIcon = (
   </svg>
 );
 
+const metricIcons = [walletIcon, incomeIcon, expenseIcon, savingsIcon];
+
 export default function Home() {
+  const [metrics, setMetrics] = useState<MetricData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // TODO: Replace with API call — e.g. fetch("/api/dashboard/metrics")
+    setMetrics([]);
+    setLoading(false);
+  }, []);
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Breadcrumb & title */}
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <nav className="flex items-center gap-2 text-sm text-zinc-500">
@@ -67,25 +81,40 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Greeting + time card */}
         <GreetingCard />
 
         {/* Metric cards */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <MetricCard title="Total balance" value="₹1,24,500" change="+12%" trend="up" icon={walletIcon} />
-          <MetricCard title="This month income" value="₹45,000" change="+8%" trend="up" icon={incomeIcon} />
-          <MetricCard title="This month expenses" value="₹28,400" change="-5%" trend="down" icon={expenseIcon} />
-          <MetricCard title="Savings rate" value="37%" change="→ 0%" trend="neutral" icon={savingsIcon} />
+          {loading ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="h-28 animate-pulse rounded-xl border border-zinc-800 bg-zinc-900" />
+            ))
+          ) : metrics.length > 0 ? (
+            metrics.map((m, i) => (
+              <MetricCard
+                key={m.title}
+                title={m.title}
+                value={m.value}
+                change={m.change}
+                trend={m.trend}
+                icon={metricIcons[i] ?? walletIcon}
+              />
+            ))
+          ) : (
+            Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="flex items-center justify-center rounded-xl border border-dashed border-zinc-800 bg-zinc-900/50 p-8">
+                <p className="text-xs text-zinc-600">No data yet</p>
+              </div>
+            ))
+          )}
         </div>
 
-        {/* Row: Quick transactions, Calendar, Insights */}
         <div className="grid gap-6 lg:grid-cols-3">
           <QuickTransactions />
           <CalendarWidget />
           <InsightsWidget />
         </div>
 
-        {/* Cash flow chart */}
         <SpendingChart />
       </div>
     </DashboardLayout>

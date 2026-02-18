@@ -1,10 +1,26 @@
 "use client";
 
+import { usePathname } from "next/navigation";
+
+const pageNames: Record<string, string> = {
+  "/": "Dashboard",
+  "/accounts": "Accounts",
+  "/transactions": "Transactions",
+  "/budgets": "Budgets",
+  "/goals": "Goals",
+  "/reports": "Reports",
+  "/settings": "Settings",
+  "/support": "Support",
+};
+
 export default function Header() {
+  const pathname = usePathname();
+  const pageName = pageNames[pathname] ?? "KeXPay";
+
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-zinc-800 bg-zinc-900/95 px-6 backdrop-blur">
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-zinc-800/80 bg-zinc-950/95 px-6 backdrop-blur">
       <div className="flex items-center gap-4">
-        <span className="text-sm text-zinc-400">Dashboard</span>
+        <span className="text-sm font-medium text-zinc-400">{pageName}</span>
       </div>
       <div className="flex items-center gap-3">
         <button
