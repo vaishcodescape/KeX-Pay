@@ -58,7 +58,7 @@ export default function Modal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-zinc-300"
+            className="rounded-xl p-1.5 text-zinc-500 transition-all duration-200 hover:bg-white/5 hover:text-zinc-300"
             aria-label="Close"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -66,7 +66,7 @@ export default function Modal({
             </svg>
           </button>
         </div>
-        <div className="mt-5">{children}</div>
+        <div className="mt-4 sm:mt-5">{children}</div>
       </div>
     </div>
   );

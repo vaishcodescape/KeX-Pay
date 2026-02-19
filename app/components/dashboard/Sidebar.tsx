@@ -1,7 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "motion/react";
+
+function useMediaQuery(query: string) {
+  const [matches, setMatches] = useState(false);
+  useEffect(() => {
+    const m = window.matchMedia(query);
+    setMatches(m.matches);
+    const listener = () => setMatches(m.matches);
+    m.addEventListener("change", listener);
+    return () => m.removeEventListener("change", listener);
+  }, [query]);
+  return matches;
+}
 
 const navItems = [
   { href: "/", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6", label: "Dashboard" },
@@ -19,7 +33,7 @@ const bottomItems = [
 
 function NavIcon({ d, active }: { d: string; active?: boolean }) {
   return (
-    <svg className={`h-5 w-5 shrink-0 transition-colors ${active ? "text-white" : "text-zinc-500"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+    <svg className={`h-5 w-5 shrink-0 transition-colors duration-200 ${active ? "text-white" : "text-zinc-500"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
       <path strokeLinecap="round" strokeLinejoin="round" d={d} />
     </svg>
   );
@@ -27,22 +41,35 @@ function NavIcon({ d, active }: { d: string; active?: boolean }) {
 
 export default function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
   const pathname = usePathname();
+  const isLg = useMediaQuery("(min-width: 1024px)");
   const isActive = (href: string) => href === "/" ? pathname === "/" : pathname.startsWith(href);
+  const sidebarX = isLg ? 0 : open ? 0 : "-100%";
 
   return (
-    <aside
-      className={`fixed left-0 top-0 z-50 flex h-screen w-52 flex-col border-r border-zinc-800/80 bg-zinc-950 transition-transform duration-200 lg:translate-x-0 ${
-        open ? "translate-x-0" : "-translate-x-full"
-      }`}
+    <motion.aside
+      initial={false}
+      animate={{ x: sidebarX }}
+      transition={{ type: "spring", damping: 25, stiffness: 200 }}
+      className="glass-surface-strong fixed left-0 top-0 z-50 flex h-screen w-64 max-w-[85vw] flex-col border-r border-white/5 lg:w-52 lg:max-w-none"
+      style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.05), 0 8px 32px rgba(0,0,0,0.4)" }}
     >
-      <div className="flex h-14 items-center justify-between border-b border-zinc-800/80 px-5">
-        <span className="text-lg font-bold tracking-tight text-white" style={{ fontFamily: "var(--font-geist-mono), ui-monospace, monospace" }}>
-          KeX<span className="text-emerald-400">Pay</span>
-        </span>
+      {/* Glassmorphism overlay */}
+      <div className="absolute inset-0 bg-linear-to-b from-white/2 to-transparent pointer-events-none" />
+      
+      <div className="relative flex h-14 items-center justify-between border-b border-white/5 px-5">
+        <motion.span 
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 }}
+          className="text-lg font-bold tracking-tight text-white" 
+          style={{ fontFamily: "var(--font-geist-mono), ui-monospace, monospace" }}
+        >
+          KeX<span className="bg-linear-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">Pay</span>
+        </motion.span>
         <button
           type="button"
           onClick={onClose}
-          className="rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-800 hover:text-white lg:hidden"
+          className="rounded-lg p-1.5 text-zinc-500 transition-colors hover:bg-white/5 hover:text-white lg:hidden"
           aria-label="Close sidebar"
         >
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -50,40 +77,82 @@ export default function Sidebar({ open, onClose }: { open: boolean; onClose: () 
           </svg>
         </button>
       </div>
-      <nav className="flex flex-1 flex-col gap-1 px-3 py-4">
-        {navItems.map((item) => {
+      
+      <nav className="relative flex flex-1 flex-col gap-1 px-3 py-4">
+        {navItems.map((item, index) => {
           const active = isActive(item.href);
           return (
-            <Link
+            <motion.div
               key={item.href}
-              href={item.href}
-              onClick={onClose}
-              className={`relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all ${active ? "bg-zinc-800/80 text-white" : "text-zinc-500 hover:bg-zinc-900 hover:text-zinc-300"}`}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 + index * 0.03 }}
             >
-              {active && <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r bg-emerald-500" />}
-              <NavIcon d={item.icon} active={active} />
-              {item.label}
-            </Link>
+              <Link
+                href={item.href}
+                onClick={onClose}
+                className={`group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 cursor-pointer ${
+                  active 
+                    ? "bg-white/5 text-white shadow-lg shadow-cyan-500/10" 
+                    : "text-zinc-500 hover:bg-white/5 hover:text-zinc-300"
+                }`}
+              >
+                <AnimatePresence>
+                  {active && (
+                    <motion.span
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      exit={{ scaleX: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-r bg-linear-to-b from-cyan-400 to-emerald-400"
+                    />
+                  )}
+                </AnimatePresence>
+                <NavIcon d={item.icon} active={active} />
+                <span>{item.label}</span>
+              </Link>
+            </motion.div>
           );
         })}
       </nav>
-      <div className="flex flex-col gap-1 border-t border-zinc-800/80 px-3 py-4">
-        {bottomItems.map((item) => {
+      
+      <div className="relative flex flex-col gap-1 border-t border-white/5 px-3 py-4">
+        {bottomItems.map((item, index) => {
           const active = isActive(item.href);
           return (
-            <Link
+            <motion.div
               key={item.href}
-              href={item.href}
-              onClick={onClose}
-              className={`relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all ${active ? "bg-zinc-800/80 text-white" : "text-zinc-500 hover:bg-zinc-900 hover:text-zinc-300"}`}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.25 + index * 0.03 }}
             >
-              {active && <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r bg-emerald-500" />}
-              <NavIcon d={item.icon} active={active} />
-              {item.label}
-            </Link>
+              <Link
+                href={item.href}
+                onClick={onClose}
+                className={`group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 cursor-pointer ${
+                  active 
+                    ? "bg-white/5 text-white shadow-lg shadow-cyan-500/10" 
+                    : "text-zinc-500 hover:bg-white/5 hover:text-zinc-300"
+                }`}
+              >
+                <AnimatePresence>
+                  {active && (
+                    <motion.span
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      exit={{ scaleX: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-r bg-linear-to-b from-cyan-400 to-emerald-400"
+                    />
+                  )}
+                </AnimatePresence>
+                <NavIcon d={item.icon} active={active} />
+                <span>{item.label}</span>
+              </Link>
+            </motion.div>
           );
         })}
       </div>
-    </aside>
+    </motion.aside>
   );
 }

@@ -60,7 +60,7 @@ export default function ReportsPage() {
                 key={p}
                 type="button"
                 onClick={() => setPeriod(p)}
-                className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${period === p ? "bg-zinc-800 text-white" : "text-zinc-500 hover:bg-zinc-800/50 hover:text-zinc-300"}`}
+                className={`glass-surface rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 ${period === p ? "bg-white/10 text-white" : "text-zinc-500 hover:bg-white/5 hover:text-zinc-300"}`}
               >
                 {p === "monthly" ? "Monthly" : "Quarterly"}
               </button>
@@ -68,7 +68,7 @@ export default function ReportsPage() {
             <button
               type="button"
               onClick={handleExport}
-              className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800/50 px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-800"
+              className="glass-surface flex items-center gap-2 rounded-xl px-4 py-2 text-sm text-zinc-300 transition-all duration-200 hover:bg-white/5"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
               Export PDF
@@ -78,29 +78,29 @@ export default function ReportsPage() {
 
         {hasData ? (
           <>
-            <div className="grid gap-4 sm:grid-cols-4">
-              <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="glass-card px-5 py-4">
                 <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Income</p>
-                <p className="mt-1 text-xl font-bold tabular-nums text-emerald-400">{formatCurrency(currentMonth!.income)}</p>
+                <p className="mt-1 text-xl font-bold tabular-nums text-cyan-400">{formatCurrency(currentMonth!.income)}</p>
               </div>
-              <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4">
+              <div className="glass-card px-5 py-4">
                 <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Expenses</p>
                 <p className="mt-1 text-xl font-bold tabular-nums text-red-400">{formatCurrency(currentMonth!.expense)}</p>
               </div>
-              <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4">
+              <div className="glass-card px-5 py-4">
                 <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Expense trend</p>
-                <p className={`mt-1 text-xl font-bold tabular-nums ${expenseChange > 0 ? "text-red-400" : "text-emerald-400"}`}>
+                <p className={`mt-1 text-xl font-bold tabular-nums ${expenseChange > 0 ? "text-red-400" : "text-cyan-400"}`}>
                   {expenseChange > 0 ? "+" : ""}{expenseChange}%
                 </p>
               </div>
-              <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4">
+              <div className="glass-card px-5 py-4">
                 <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Savings rate</p>
                 <p className="mt-1 text-xl font-bold tabular-nums text-amber-400">{savingsRate}%</p>
               </div>
             </div>
 
             <div className="grid gap-6 lg:grid-cols-5">
-              <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5 lg:col-span-3">
+              <div className="glass-card p-5 lg:col-span-3">
                 <h3 className="text-sm font-semibold text-white">Income vs Expenses</h3>
                 <p className="mt-0.5 text-xs text-zinc-500">6-month comparison</p>
                 <div className="mt-6 space-y-3">
@@ -109,7 +109,7 @@ export default function ReportsPage() {
                       <span className="w-8 text-xs font-medium text-zinc-500">{d.month}</span>
                       <div className="flex-1 space-y-1">
                         <div className="flex items-center gap-2">
-                          <div className="h-2 rounded-full bg-emerald-500/80 transition-all duration-500" style={{ width: `${(d.income / maxValue) * 100}%` }} />
+                          <div className="h-2 rounded-full bg-cyan-500/80 transition-all duration-500" style={{ width: `${(d.income / maxValue) * 100}%` }} />
                           <span className="text-xs tabular-nums text-zinc-400">{formatCurrency(d.income)}</span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -121,12 +121,12 @@ export default function ReportsPage() {
                   ))}
                 </div>
                 <div className="mt-4 flex gap-4 border-t border-zinc-800 pt-3">
-                  <div className="flex items-center gap-2 text-xs text-zinc-400"><div className="h-2 w-6 rounded-full bg-emerald-500/80" />Income</div>
+                  <div className="flex items-center gap-2 text-xs text-zinc-400"><div className="h-2 w-6 rounded-full bg-cyan-500/80" />Income</div>
                   <div className="flex items-center gap-2 text-xs text-zinc-500"><div className="h-2 w-6 rounded-full bg-zinc-600" />Expenses</div>
                 </div>
               </div>
 
-              <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5 lg:col-span-2">
+              <div className="glass-card p-5 lg:col-span-2">
                 <h3 className="text-sm font-semibold text-white">By Category</h3>
                 <p className="mt-0.5 text-xs text-zinc-500">Where your money goes</p>
                 <div className="mt-4 flex justify-center">
@@ -160,7 +160,7 @@ export default function ReportsPage() {
             </div>
 
             {merchants.length > 0 && (
-              <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
+              <div className="glass-card p-5">
                 <h3 className="text-sm font-semibold text-white">Top Merchants</h3>
                 <p className="mt-0.5 text-xs text-zinc-500">Most frequent spending destinations</p>
                 <div className="mt-4 divide-y divide-zinc-800">
@@ -179,11 +179,11 @@ export default function ReportsPage() {
             )}
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-800 bg-zinc-900/50 py-16">
+          <div className="glass-card flex flex-col items-center justify-center border-dashed py-16">
             <svg className="h-10 w-10 text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
             <p className="mt-3 text-sm font-medium text-zinc-400">No report data yet</p>
             <p className="mt-1 text-xs text-zinc-600">Add transactions to generate spending insights and trends</p>
-            <Link href="/transactions" className="mt-4 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500">
+            <Link href="/transactions" className="mt-4 rounded-xl bg-linear-to-r from-cyan-500 to-emerald-500 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:opacity-90">
               Go to Transactions
             </Link>
           </div>

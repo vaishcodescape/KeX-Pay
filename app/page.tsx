@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { motion } from "motion/react";
 import DashboardLayout from "./components/dashboard/DashboardLayout";
 import GreetingCard from "./components/dashboard/GreetingCard";
 import MetricCard from "./components/dashboard/MetricCard";
@@ -104,30 +105,34 @@ export default function Home() {
           <div className="mt-4 flex items-center gap-2 sm:mt-0">
             <Dropdown
               trigger={
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
-                  className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800/50 px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-800"
+                  className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-2 text-sm text-zinc-300 transition-all duration-200 hover:bg-white/10"
                 >
                   {period}
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                </button>
+                </motion.button>
               }
               align="right"
             >
               {periodOptions.map((p) => (
                 <DropdownItem key={p} onClick={() => setPeriod(p)}>
-                  <span className={p === period ? "text-emerald-400" : ""}>{p}</span>
+                  <span className={p === period ? "text-cyan-400" : ""}>{p}</span>
                 </DropdownItem>
               ))}
             </Dropdown>
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="button"
               onClick={handleExport}
-              className="flex items-center gap-2 rounded-lg bg-zinc-800 px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-700"
+              className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-2 text-sm text-zinc-200 transition-all duration-200 hover:bg-white/10"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
               Export
-            </button>
+            </motion.button>
           </div>
         </div>
 
@@ -135,19 +140,23 @@ export default function Home() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {metrics.map((m, i) => (
-            <MetricCard key={m.title} title={m.title} value={m.value} change={m.change} trend={m.trend} icon={metricIcons[i] ?? walletIcon} />
+            <MetricCard key={m.title} title={m.title} value={m.value} change={m.change} trend={m.trend} icon={metricIcons[i] ?? walletIcon} index={i} />
           ))}
         </div>
 
         {/* Add transaction FAB */}
-        <button
+        <motion.button
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           type="button"
           onClick={() => setAddOpen(true)}
-          className="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg shadow-emerald-900/30 transition-transform hover:scale-105 hover:bg-emerald-500 lg:hidden"
+          className="fixed bottom-6 right-6 z-40 flex h-14 w-14 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-linear-to-r from-cyan-500 to-emerald-500 text-white shadow-2xl shadow-cyan-500/40 backdrop-blur-sm transition-all duration-200 hover:shadow-cyan-500/60 lg:hidden [bottom:max(1.5rem,env(safe-area-inset-bottom))] [right:max(1.5rem,env(safe-area-inset-right))]"
           aria-label="Add transaction"
         >
           <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-        </button>
+        </motion.button>
 
         <div className="grid gap-6 lg:grid-cols-3">
           <QuickTransactions

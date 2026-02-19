@@ -12,7 +12,7 @@ function Toggle({ enabled, onToggle }: { enabled: boolean; onToggle: () => void 
     <button
       type="button"
       onClick={onToggle}
-      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${enabled ? "bg-emerald-600" : "bg-zinc-700"}`}
+      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${enabled ? "bg-cyan-500" : "bg-zinc-700"}`}
       role="switch"
       aria-checked={enabled}
     >
@@ -80,22 +80,22 @@ export default function SettingsPage() {
         </div>
 
         {/* Profile */}
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
+        <div className="glass-card p-6">
           <h2 className="text-sm font-semibold text-white">Profile</h2>
           <p className="mt-0.5 text-xs text-zinc-500">Your personal information</p>
           <div className="mt-6 flex items-start gap-6">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-emerald-600/80 text-xl font-bold text-white">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-cyan-500 to-emerald-500 text-xl font-bold text-white">
               {name.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1 space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="block text-xs font-medium text-zinc-400">Full name</label>
-                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white outline-none transition-colors focus:border-zinc-600" />
+                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="glass-surface mt-1.5 w-full rounded-xl px-3.5 py-2.5 text-sm text-white outline-none transition-all duration-200 focus:ring-2 focus:ring-cyan-500/30" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-zinc-400">Email</label>
-                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white outline-none transition-colors focus:border-zinc-600" />
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="glass-surface mt-1.5 w-full rounded-xl px-3.5 py-2.5 text-sm text-white outline-none transition-all duration-200 focus:ring-2 focus:ring-cyan-500/30" />
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -113,7 +113,7 @@ export default function SettingsPage() {
                   type="button"
                   onClick={handleSaveProfile}
                   disabled={saving}
-                  className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500 disabled:opacity-50"
+                  className="rounded-xl bg-linear-to-r from-cyan-500 to-emerald-500 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:opacity-90 disabled:opacity-50"
                 >
                   {saving ? "Saving..." : "Save changes"}
                 </button>
@@ -123,7 +123,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Preferences */}
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
+        <div className="glass-card p-6">
           <h2 className="text-sm font-semibold text-white">Preferences</h2>
           <p className="mt-0.5 text-xs text-zinc-500">Customize your experience</p>
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
@@ -132,7 +132,7 @@ export default function SettingsPage() {
               <Dropdown
                 align="left"
                 trigger={
-                  <div className="mt-1.5 flex cursor-pointer items-center justify-between rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white hover:border-zinc-700">
+                  <div className="glass-surface mt-1.5 flex cursor-pointer items-center justify-between rounded-xl px-3.5 py-2.5 text-sm text-white transition-all duration-200 hover:bg-white/5">
                     <span>{currency}</span>
                     <svg className="h-4 w-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                   </div>
@@ -140,7 +140,7 @@ export default function SettingsPage() {
               >
                 {currencies.map((c) => (
                   <DropdownItem key={c} onClick={() => { setCurrency(c); toast(`Currency set to ${c}`, "success"); }}>
-                    <span className={c === currency ? "text-emerald-400" : ""}>{c}</span>
+                    <span className={c === currency ? "text-cyan-400" : ""}>{c}</span>
                   </DropdownItem>
                 ))}
               </Dropdown>
@@ -150,7 +150,7 @@ export default function SettingsPage() {
               <Dropdown
                 align="left"
                 trigger={
-                  <div className="mt-1.5 flex cursor-pointer items-center justify-between rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white hover:border-zinc-700">
+                  <div className="glass-surface mt-1.5 flex cursor-pointer items-center justify-between rounded-xl px-3.5 py-2.5 text-sm text-white transition-all duration-200 hover:bg-white/5">
                     <span>{dateFormat}</span>
                     <svg className="h-4 w-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                   </div>
@@ -158,7 +158,7 @@ export default function SettingsPage() {
               >
                 {dateFormats.map((f) => (
                   <DropdownItem key={f} onClick={() => { setDateFormat(f); toast(`Date format: ${f}`, "success"); }}>
-                    <span className={f === dateFormat ? "text-emerald-400" : ""}>{f}</span>
+                    <span className={f === dateFormat ? "text-cyan-400" : ""}>{f}</span>
                   </DropdownItem>
                 ))}
               </Dropdown>
@@ -168,7 +168,7 @@ export default function SettingsPage() {
               <Dropdown
                 align="left"
                 trigger={
-                  <div className="mt-1.5 flex cursor-pointer items-center justify-between rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white hover:border-zinc-700">
+                  <div className="glass-surface mt-1.5 flex cursor-pointer items-center justify-between rounded-xl px-3.5 py-2.5 text-sm text-white transition-all duration-200 hover:bg-white/5">
                     <span>{weekStart}</span>
                     <svg className="h-4 w-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                   </div>
@@ -176,7 +176,7 @@ export default function SettingsPage() {
               >
                 {weekStarts.map((w) => (
                   <DropdownItem key={w} onClick={() => { setWeekStart(w); toast(`Week starts on ${w}`, "success"); }}>
-                    <span className={w === weekStart ? "text-emerald-400" : ""}>{w}</span>
+                    <span className={w === weekStart ? "text-cyan-400" : ""}>{w}</span>
                   </DropdownItem>
                 ))}
               </Dropdown>
@@ -185,7 +185,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Notifications */}
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
+        <div className="glass-card p-6">
           <h2 className="text-sm font-semibold text-white">Notifications</h2>
           <p className="mt-0.5 text-xs text-zinc-500">Control how you receive alerts</p>
           <div className="mt-6 divide-y divide-zinc-800">
@@ -205,7 +205,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Security */}
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
+        <div className="glass-card p-6">
           <h2 className="text-sm font-semibold text-white">Security</h2>
           <p className="mt-0.5 text-xs text-zinc-500">Protect your account</p>
           <div className="mt-6 divide-y divide-zinc-800">
@@ -225,19 +225,19 @@ export default function SettingsPage() {
         </div>
 
         {/* Data & Privacy */}
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
+        <div className="glass-card p-6">
           <h2 className="text-sm font-semibold text-white">Data & Privacy</h2>
           <p className="mt-0.5 text-xs text-zinc-500">Your data, your control</p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <button type="button" onClick={handleExportData} className="flex items-center gap-2 rounded-lg border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800">
+            <button type="button" onClick={handleExportData} className="glass-surface flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-300 transition-all duration-200 hover:bg-white/5">
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
               Export all data
             </button>
-            <button type="button" onClick={handleImportData} className="flex items-center gap-2 rounded-lg border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800">
+            <button type="button" onClick={handleImportData} className="glass-surface flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-300 transition-all duration-200 hover:bg-white/5">
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
               Import data
             </button>
-            <button type="button" onClick={() => setDeleteModalOpen(true)} className="flex items-center gap-2 rounded-lg border border-red-900/50 px-4 py-2.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-950/30">
+            <button type="button" onClick={() => setDeleteModalOpen(true)} className="glass-surface flex items-center gap-2 rounded-xl border-red-900/50 px-4 py-2.5 text-sm font-medium text-red-400 transition-all duration-200 hover:bg-red-950/30">
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
               Delete account
             </button>
@@ -257,19 +257,19 @@ export default function SettingsPage() {
         >
           <div>
             <label className="block text-xs font-medium text-zinc-400">Current password</label>
-            <input type="password" placeholder="••••••••" className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-zinc-600" required />
+            <input type="password" placeholder="••••••••" className="glass-surface mt-1.5 w-full rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-all duration-200 focus:ring-2 focus:ring-cyan-500/30" required />
           </div>
           <div>
             <label className="block text-xs font-medium text-zinc-400">New password</label>
-            <input type="password" placeholder="••••••••" className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-zinc-600" required />
+            <input type="password" placeholder="••••••••" className="glass-surface mt-1.5 w-full rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-all duration-200 focus:ring-2 focus:ring-cyan-500/30" required />
           </div>
           <div>
             <label className="block text-xs font-medium text-zinc-400">Confirm new password</label>
-            <input type="password" placeholder="••••••••" className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-zinc-600" required />
+            <input type="password" placeholder="••••••••" className="glass-surface mt-1.5 w-full rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-all duration-200 focus:ring-2 focus:ring-cyan-500/30" required />
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={() => setPasswordModalOpen(false)} className="flex-1 rounded-lg border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800">Cancel</button>
-            <button type="submit" className="flex-1 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-emerald-500">Update password</button>
+            <button type="button" onClick={() => setPasswordModalOpen(false)} className="glass-surface flex-1 rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-300 transition-all duration-200 hover:bg-white/5">Cancel</button>
+            <button type="submit" className="flex-1 rounded-xl bg-linear-to-r from-cyan-500 to-emerald-500 px-4 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:opacity-90">Update password</button>
           </div>
         </form>
       </Modal>
@@ -283,11 +283,11 @@ export default function SettingsPage() {
           </div>
           <div>
             <label className="block text-xs font-medium text-zinc-400">Type &ldquo;DELETE&rdquo; to confirm</label>
-            <input type="text" placeholder="DELETE" className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-red-600" />
+            <input type="text" placeholder="DELETE" className="glass-surface mt-1.5 w-full rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-all duration-200 focus:ring-2 focus:ring-red-500/30" />
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={() => setDeleteModalOpen(false)} className="flex-1 rounded-lg border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800">Cancel</button>
-            <button type="button" onClick={() => { setDeleteModalOpen(false); toast("Account deletion cancelled (demo mode)", "info"); }} className="flex-1 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-red-500">Delete account</button>
+            <button type="button" onClick={() => setDeleteModalOpen(false)} className="glass-surface flex-1 rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-300 transition-all duration-200 hover:bg-white/5">Cancel</button>
+            <button type="button" onClick={() => { setDeleteModalOpen(false); toast("Account deletion cancelled (demo mode)", "info"); }} className="flex-1 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:bg-red-500">Delete account</button>
           </div>
         </div>
       </Modal>

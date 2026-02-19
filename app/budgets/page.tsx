@@ -15,7 +15,7 @@ function formatCurrency(n: number) {
 function getStatusColor(percent: number) {
   if (percent >= 90) return { bar: "bg-red-500", text: "text-red-400", label: "Over limit" };
   if (percent >= 70) return { bar: "bg-amber-500", text: "text-amber-400", label: "Caution" };
-  return { bar: "bg-emerald-500", text: "text-emerald-400", label: "On track" };
+  return { bar: "bg-cyan-500", text: "text-cyan-400", label: "On track" };
 }
 
 const categoryOptions = [
@@ -75,10 +75,10 @@ function AddBudgetModal({
                 key={cat.name}
                 type="button"
                 onClick={() => setSelected(i)}
-                className={`flex flex-col items-center gap-1 rounded-lg p-2.5 text-xs transition-colors ${
+                className={`glass-surface flex flex-col items-center gap-1 rounded-xl p-2.5 text-xs transition-all duration-200 ${
                   selected === i
-                    ? "bg-zinc-700 text-white ring-1 ring-zinc-600"
-                    : "bg-zinc-800/50 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-300"
+                    ? "bg-white/10 text-white ring-1 ring-white/20"
+                    : "text-zinc-400 hover:bg-white/5 hover:text-zinc-300"
                 }`}
               >
                 <div className={`flex h-7 w-7 items-center justify-center rounded-md ${cat.color}/15`}>
@@ -99,13 +99,13 @@ function AddBudgetModal({
             onChange={(e) => setBudget(e.target.value)}
             placeholder="e.g. 15000"
             min="1"
-            className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-zinc-600"
+            className="glass-surface mt-1.5 w-full rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-all duration-200 focus:ring-2 focus:ring-cyan-500/30"
             required
           />
         </div>
         <div className="flex gap-3 pt-2">
-          <button type="button" onClick={onClose} className="flex-1 rounded-lg border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800">Cancel</button>
-          <button type="submit" className="flex-1 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-emerald-500">Create budget</button>
+          <button type="button" onClick={onClose} className="glass-surface flex-1 rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-300 transition-all duration-200 hover:bg-white/5">Cancel</button>
+          <button type="submit" className="flex-1 rounded-xl bg-linear-to-r from-cyan-500 to-emerald-500 px-4 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:opacity-90">Create budget</button>
         </div>
       </form>
     </Modal>
@@ -153,7 +153,7 @@ export default function BudgetsPage() {
           <div className="mt-4 flex items-center gap-2 sm:mt-0">
             <Dropdown
               trigger={
-                <button type="button" className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800/50 px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-800">
+                <button type="button" className="glass-surface flex items-center gap-2 rounded-xl px-4 py-2 text-sm text-zinc-300 transition-all duration-200 hover:bg-white/5">
                   {selectedMonth}
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                 </button>
@@ -161,14 +161,14 @@ export default function BudgetsPage() {
             >
               {months.map((m) => (
                 <DropdownItem key={m} onClick={() => setSelectedMonth(m)}>
-                  <span className={m === selectedMonth ? "text-emerald-400" : ""}>{m}</span>
+                  <span className={m === selectedMonth ? "text-cyan-400" : ""}>{m}</span>
                 </DropdownItem>
               ))}
             </Dropdown>
             <button
               type="button"
               onClick={() => setAddOpen(true)}
-              className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
+              className="flex items-center gap-2 rounded-xl bg-linear-to-r from-cyan-500 to-emerald-500 px-4 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:opacity-90"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
               New budget
@@ -178,7 +178,7 @@ export default function BudgetsPage() {
 
         {budgets.length > 0 ? (
           <>
-            <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
+            <div className="glass-card p-6">
               <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-6">
                   <div className="relative h-24 w-24 shrink-0">
@@ -186,7 +186,7 @@ export default function BudgetsPage() {
                       <circle cx="18" cy="18" r="14" fill="none" stroke="currentColor" strokeWidth="3" className="text-zinc-800" />
                       <circle
                         cx="18" cy="18" r="14" fill="none"
-                        stroke={overallPercent >= 90 ? "#ef4444" : overallPercent >= 70 ? "#f59e0b" : "#10b981"}
+                        stroke={overallPercent >= 90 ? "#ef4444" : overallPercent >= 70 ? "#f59e0b" : "#06b6d4"}
                         strokeWidth="3"
                         strokeDasharray={`${overallPercent * 0.88} 88`}
                         strokeLinecap="round"
@@ -204,7 +204,7 @@ export default function BudgetsPage() {
                 <div className="grid grid-cols-2 gap-6">
                   <div>
                     <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Remaining</p>
-                    <p className="mt-1 text-lg font-bold text-emerald-400">{formatCurrency(totalRemaining)}</p>
+                    <p className="mt-1 text-lg font-bold text-cyan-400">{formatCurrency(totalRemaining)}</p>
                   </div>
                   <div>
                     <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Daily allowance</p>
@@ -221,7 +221,7 @@ export default function BudgetsPage() {
                 const remaining = cat.budget - cat.spent;
 
                 return (
-                  <div key={cat.id} className="group rounded-xl border border-zinc-800 bg-zinc-900 p-5 transition-colors hover:border-zinc-700">
+                  <div key={cat.id} className="glass-card group p-5 transition-all duration-200 hover:scale-[1.01]">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
                         <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${cat.color}/10`}>
@@ -261,7 +261,7 @@ export default function BudgetsPage() {
                     <button
                       type="button"
                       onClick={() => addSpending(cat.id, Math.round(cat.budget * 0.1))}
-                      className="mt-3 w-full rounded-lg border border-zinc-700 py-1.5 text-xs font-medium text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-200"
+                      className="glass-surface mt-3 w-full rounded-xl py-1.5 text-xs font-medium text-zinc-400 transition-all duration-200 hover:bg-white/5 hover:text-zinc-200"
                     >
                       + Log spending
                     </button>
@@ -271,11 +271,11 @@ export default function BudgetsPage() {
             </div>
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-800 bg-zinc-900/50 py-16">
+          <div className="glass-card flex flex-col items-center justify-center border-dashed py-16">
             <svg className="h-10 w-10 text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z M13.5 3.75a7.5 7.5 0 017.5 7.5h-7.5V3.75z" /></svg>
             <p className="mt-3 text-sm font-medium text-zinc-400">No budgets set up yet</p>
             <p className="mt-1 text-xs text-zinc-600">Create category budgets to track your monthly spending limits</p>
-            <button type="button" onClick={() => setAddOpen(true)} className="mt-4 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500">Create budget</button>
+            <button type="button" onClick={() => setAddOpen(true)} className="mt-4 rounded-xl bg-linear-to-r from-cyan-500 to-emerald-500 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:opacity-90">Create budget</button>
           </div>
         )}
       </div>

@@ -8,7 +8,7 @@ import { useToast } from "../components/ui/Toast";
 import type { Account } from "../lib/types";
 
 const accountTypes: Account["type"][] = ["Savings", "Checking", "Credit Card", "Investment", "Cash"];
-const accentColors = ["bg-emerald-500", "bg-blue-500", "bg-violet-500", "bg-amber-500", "bg-pink-500", "bg-cyan-500", "bg-red-500"];
+const accentColors = ["bg-cyan-500", "bg-blue-500", "bg-violet-500", "bg-amber-500", "bg-pink-500", "bg-cyan-500", "bg-red-500"];
 
 function formatCurrency(n: number) {
   const abs = Math.abs(n);
@@ -66,7 +66,7 @@ function AddAccountModal({
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. HDFC Savings"
-            className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-zinc-600"
+            className="glass-surface mt-1.5 w-full rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-all duration-200 focus:ring-2 focus:ring-cyan-500/30"
             required
           />
         </div>
@@ -78,7 +78,7 @@ function AddAccountModal({
               value={institution}
               onChange={(e) => setInstitution(e.target.value)}
               placeholder="e.g. HDFC Bank"
-              className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-zinc-600"
+              className="glass-surface mt-1.5 w-full rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-all duration-200 focus:ring-2 focus:ring-cyan-500/30"
             />
           </div>
           <div>
@@ -86,7 +86,7 @@ function AddAccountModal({
             <select
               value={type}
               onChange={(e) => setType(e.target.value as Account["type"])}
-              className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white outline-none transition-colors focus:border-zinc-600"
+              className="glass-surface mt-1.5 w-full rounded-xl px-3.5 py-2.5 text-sm text-white outline-none transition-all duration-200 focus:ring-2 focus:ring-cyan-500/30"
             >
               {accountTypes.map((t) => (
                 <option key={t} value={t}>{t}</option>
@@ -103,7 +103,7 @@ function AddAccountModal({
               onChange={(e) => setBalance(e.target.value)}
               placeholder="0.00"
               step="0.01"
-              className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-zinc-600"
+              className="glass-surface mt-1.5 w-full rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-all duration-200 focus:ring-2 focus:ring-cyan-500/30"
             />
           </div>
           <div>
@@ -113,13 +113,13 @@ function AddAccountModal({
               value={number}
               onChange={(e) => setNumber(e.target.value)}
               placeholder="••••1234"
-              className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-zinc-600"
+              className="glass-surface mt-1.5 w-full rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-all duration-200 focus:ring-2 focus:ring-cyan-500/30"
             />
           </div>
         </div>
         <div className="flex gap-3 pt-2">
-          <button type="button" onClick={onClose} className="flex-1 rounded-lg border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800">Cancel</button>
-          <button type="submit" className="flex-1 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-emerald-500">Add account</button>
+          <button type="button" onClick={onClose} className="glass-surface flex-1 rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-300 transition-all duration-200 hover:bg-white/5">Cancel</button>
+          <button type="submit" className="flex-1 rounded-xl bg-linear-to-r from-cyan-500 to-emerald-500 px-4 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:opacity-90">Add account</button>
         </div>
       </form>
     </Modal>
@@ -158,7 +158,7 @@ export default function AccountsPage() {
           <button
             type="button"
             onClick={() => setAddOpen(true)}
-            className="mt-4 flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-emerald-500 sm:mt-0"
+            className="mt-4 flex items-center gap-2 rounded-xl bg-linear-to-r from-cyan-500 to-emerald-500 px-4 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:opacity-90 sm:mt-0"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
             Add account
@@ -167,17 +167,17 @@ export default function AccountsPage() {
 
         {accounts.length > 0 && (
           <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6 sm:col-span-1">
-              <p className="text-sm font-medium text-zinc-400">Net worth</p>
+            <div className="glass-card p-5 sm:col-span-1">
+              <p className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Net worth</p>
               <p className="mt-2 text-3xl font-bold tracking-tight text-white">{formatCurrency(totalBalance)}</p>
             </div>
-            <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
-              <p className="text-sm font-medium text-zinc-400">Total assets</p>
-              <p className="mt-2 text-2xl font-bold tracking-tight text-emerald-400">{formatCurrency(totalAssets)}</p>
+            <div className="glass-card p-5">
+              <p className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Total assets</p>
+              <p className="mt-2 text-2xl font-bold tracking-tight text-cyan-400">{formatCurrency(totalAssets)}</p>
               <p className="mt-1 text-xs text-zinc-500">{accounts.filter((a) => a.balance > 0).length} accounts</p>
             </div>
-            <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
-              <p className="text-sm font-medium text-zinc-400">Liabilities</p>
+            <div className="glass-card p-5">
+              <p className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Liabilities</p>
               <p className="mt-2 text-2xl font-bold tracking-tight text-red-400">{formatCurrency(totalLiabilities)}</p>
               <p className="mt-1 text-xs text-zinc-500">{accounts.filter((a) => a.balance < 0).length} accounts</p>
             </div>
@@ -189,45 +189,48 @@ export default function AccountsPage() {
             {accounts.map((account) => (
               <div
                 key={account.id}
-                className="group flex items-center gap-5 rounded-xl border border-zinc-800 bg-zinc-900 p-5 transition-colors hover:border-zinc-700"
+                className="glass-card group flex flex-col gap-4 p-5 transition-all duration-200 hover:scale-[1.01] sm:flex-row sm:items-center sm:gap-5"
               >
-                <div className={`h-10 w-1 rounded-full ${account.accentColor}`} />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3">
-                    <p className="text-sm font-semibold text-white">{account.name}</p>
-                    <span className="rounded-md bg-zinc-800 px-2 py-0.5 text-xs font-medium text-zinc-400">{account.type}</span>
+                <div className="flex min-w-0 flex-1 items-center gap-4 sm:flex-row sm:gap-5">
+                  <div className={`h-10 w-1 shrink-0 rounded-full ${account.accentColor}`} />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                      <p className="text-sm font-semibold text-white truncate">{account.name}</p>
+                      <span className="rounded-md bg-zinc-800 px-2 py-0.5 text-xs font-medium text-zinc-400 shrink-0">{account.type}</span>
+                    </div>
+                    <p className="mt-0.5 text-xs text-zinc-500 truncate">{account.institution}</p>
+                    <p className="mt-1 text-xs text-zinc-500 sm:hidden">{account.number} · {account.lastActivity}</p>
                   </div>
-                  <p className="mt-0.5 text-xs text-zinc-500">{account.institution}</p>
                 </div>
                 <div className="hidden text-right sm:block">
                   <p className="font-mono text-xs text-zinc-500">{account.number}</p>
                   <p className="mt-0.5 text-xs text-zinc-500">{account.lastActivity}</p>
                 </div>
-                <div className="text-right">
+                <div className="flex items-center justify-between gap-2 sm:justify-end sm:text-right">
                   <p className={`text-lg font-bold tabular-nums tracking-tight ${account.balance >= 0 ? "text-white" : "text-red-400"}`}>
                     {formatCurrency(account.balance)}
                   </p>
+                  <button
+                    type="button"
+                    onClick={() => removeAccount(account.id)}
+                    className="touch-manipulation rounded-lg p-2.5 text-zinc-600 transition-all hover:bg-white/5 hover:text-red-400 sm:opacity-0 sm:group-hover:opacity-100"
+                    aria-label="Remove account"
+                  >
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => removeAccount(account.id)}
-                  className="rounded-lg p-2 text-zinc-600 opacity-0 transition-all hover:bg-zinc-800 hover:text-red-400 group-hover:opacity-100"
-                  aria-label="Remove account"
-                >
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                </button>
               </div>
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-800 bg-zinc-900/50 py-16">
+          <div className="glass-card flex flex-col items-center justify-center border-dashed py-16">
             <svg className="h-10 w-10 text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" /></svg>
             <p className="mt-3 text-sm font-medium text-zinc-400">No accounts added yet</p>
             <p className="mt-1 text-xs text-zinc-600">Add your first bank account, credit card, or cash wallet to get started</p>
             <button
               type="button"
               onClick={() => setAddOpen(true)}
-              className="mt-4 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
+              className="mt-4 rounded-xl bg-linear-to-r from-cyan-500 to-emerald-500 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:opacity-90"
             >
               Add account
             </button>
