@@ -3,6 +3,28 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Accent — light blue to light green gradient (cyan → emerald) */
+  --accent: 34 211 238; /* cyan-400 */
+  --accent-hover: 20 184 166; /* teal-500 / emerald-500 */
+  --accent-muted: 52 211 153; /* emerald-400 */
+  --accent-subtle: rgba(34, 211, 238, 0.12);
+  --accent-subtle-strong: rgba(34, 211, 238, 0.18);
+
+  /* Transparent glassmorphism — high transparency, strong blur for frosted effect */
+  --glass-blur: 24px;
+  --glass-blur-strong: 32px;
+  --glass-bg: rgba(24, 24, 27, 0.28);
+  --glass-bg-strong: rgba(24, 24, 27, 0.48);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-border-subtle: rgba(255, 255, 255, 0.04);
+  --glass-highlight: rgba(255, 255, 255, 0.05);
+  --shadow-glass:
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 4px 20px rgba(0, 0, 0, 0.15);
+  --shadow-glass-hover:
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 8px 28px rgba(0, 0, 0, 0.2);
 }
 
 @theme inline {
@@ -23,12 +45,74 @@
 html.dark {
   --background: #09090b;
   --foreground: #fafafa;
+
+  --glass-bg: rgba(9, 9, 11, 0.32);
+  --glass-bg-strong: rgba(9, 9, 11, 0.52);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    "SF Pro Text", "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Transparent glassmorphism — frosted glass, see-through surfaces */
+.glass-surface {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--shadow-glass);
+}
+
+.glass-surface-strong {
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur-strong));
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong));
+  box-shadow: var(--shadow-glass);
+}
+
+.glass-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border-subtle);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--shadow-glass);
+}
+
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.03) 0%, transparent 45%);
+  opacity: 1;
+  pointer-events: none;
+}
+
+/* Primary accent — use bg-linear-to-r from-cyan-500 to-emerald-500 */
+
+.glass-card:hover {
+  box-shadow: var(--shadow-glass-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 @keyframes fade-in {

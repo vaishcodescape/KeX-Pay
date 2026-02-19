@@ -50,56 +50,59 @@ export default function Header({ onToggleSidebar }: { onToggleSidebar?: () => vo
 
   return (
     <>
-      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-zinc-800/80 bg-zinc-950/95 px-6 backdrop-blur">
-        <div className="flex items-center gap-4">
+      <header
+        className="glass-surface-strong sticky top-0 z-30 flex h-14 items-center justify-between border-b border-white/5 px-6"
+        style={{ boxShadow: "0 1px 0 0 rgba(255,255,255,0.05)" }}
+      >
+        <div className="flex min-w-0 items-center gap-2 sm:gap-4">
           <button
             type="button"
             onClick={onToggleSidebar}
-            className="rounded-lg p-2 text-zinc-400 hover:bg-zinc-800 hover:text-white lg:hidden"
+            className="touch-manipulation rounded-lg p-2.5 text-zinc-400 transition-all duration-200 hover:bg-white/5 hover:text-white lg:hidden"
             aria-label="Toggle sidebar"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <span className="text-sm font-medium text-zinc-400">{pageName}</span>
+          <span className="truncate text-base font-semibold text-white sm:text-lg">{pageName}</span>
         </div>
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
-            className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800/50 px-3 py-2 text-sm text-zinc-400 transition-colors hover:border-zinc-600 hover:text-zinc-200"
+            className="touch-manipulation flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 backdrop-blur-sm px-2.5 py-2 text-sm text-zinc-400 transition-all duration-200 hover:border-white/20 hover:bg-white/10 hover:text-zinc-200 sm:px-3"
           >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <span className="hidden sm:inline">Search...</span>
-            <kbd className="hidden rounded bg-zinc-700 px-1.5 py-0.5 text-xs sm:inline">⌘K</kbd>
+            <kbd className="hidden rounded bg-zinc-700 px-1.5 py-0.5 text-xs md:inline">⌘K</kbd>
           </button>
 
           {/* Notifications */}
           <Dropdown
             trigger={
-              <button type="button" className="relative rounded-lg p-2 text-zinc-400 hover:bg-zinc-800 hover:text-white" aria-label="Notifications">
+              <button type="button" className="touch-manipulation relative rounded-lg p-2.5 text-zinc-400 transition-all duration-200 hover:bg-white/5 hover:text-white" aria-label="Notifications">
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
                 {unreadCount > 0 && (
-                  <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[10px] font-bold text-white">
+                  <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-cyan-500 text-[10px] font-bold text-white">
                     {unreadCount}
                   </span>
                 )}
               </button>
             }
           >
-            <div className="w-72 p-0" onClick={(e) => e.stopPropagation()}>
+            <div className="w-[calc(100vw-2rem)] max-w-72 p-0 sm:w-72" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between px-3 py-2">
                 <p className="text-xs font-semibold text-zinc-300">Notifications</p>
                 {unreadCount > 0 && (
                   <button
                     type="button"
                     onClick={markAllRead}
-                    className="text-xs text-emerald-400 hover:text-emerald-300"
+                    className="text-xs text-cyan-400 hover:text-cyan-300"
                   >
                     Mark all read
                   </button>
@@ -117,7 +120,7 @@ export default function Header({ onToggleSidebar }: { onToggleSidebar?: () => vo
                     }
                   >
                     <div className="flex items-start gap-2">
-                      {!n.read && <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />}
+                      {!n.read && <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-500" />}
                       <div className={!n.read ? "" : "pl-3.5"}>
                         <p className="text-xs font-medium text-zinc-200">{n.title}</p>
                         <p className="mt-0.5 text-xs text-zinc-500">{n.desc}</p>
@@ -133,9 +136,9 @@ export default function Header({ onToggleSidebar }: { onToggleSidebar?: () => vo
           {/* User dropdown */}
           <Dropdown
             trigger={
-              <div className="flex cursor-pointer items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800/50 px-3 py-2 transition-colors hover:border-zinc-600">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-600/80 text-xs font-medium text-white">U</div>
-                <span className="hidden text-sm font-medium text-zinc-200 sm:inline">User</span>
+              <div className="flex cursor-pointer items-center gap-2 rounded-lg border border-white/10 bg-white/5 backdrop-blur-sm px-2 py-2 transition-all duration-200 hover:border-white/20 hover:bg-white/10 sm:px-3">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-cyan-500 to-emerald-500 text-xs font-medium text-white">U</div>
+                <span className="hidden text-sm font-medium text-zinc-200 md:inline">User</span>
                 <svg className="h-4 w-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>

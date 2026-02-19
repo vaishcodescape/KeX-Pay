@@ -11,7 +11,7 @@ const categories = [
 ];
 
 const categoryColors: Record<string, string> = {
-  Salary: "bg-emerald-500", Freelance: "bg-teal-500", Investment: "bg-blue-500",
+  Salary: "bg-cyan-500", Freelance: "bg-cyan-500", Investment: "bg-blue-500",
   Housing: "bg-violet-500", Utilities: "bg-amber-500", Shopping: "bg-pink-500",
   "Food & Dining": "bg-orange-500", Entertainment: "bg-purple-500",
   Transport: "bg-cyan-500", Groceries: "bg-lime-500", Health: "bg-red-500",
@@ -72,12 +72,12 @@ export default function AddTransactionModal({
               key={t}
               type="button"
               onClick={() => setType(t)}
-              className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition-colors ${
+              className={`glass-surface flex-1 rounded-xl py-2.5 text-sm font-medium transition-all duration-200 ${
                 type === t
                   ? t === "income"
-                    ? "bg-emerald-600/20 text-emerald-400 ring-1 ring-emerald-600/40"
+                    ? "bg-cyan-600/20 text-cyan-400 ring-1 ring-cyan-600/40"
                     : "bg-red-600/20 text-red-400 ring-1 ring-red-600/40"
-                  : "bg-zinc-800 text-zinc-400 hover:text-zinc-300"
+                  : "text-zinc-400 hover:bg-white/5 hover:text-zinc-300"
               }`}
             >
               {t === "income" ? "Income" : "Expense"}
@@ -92,7 +92,7 @@ export default function AddTransactionModal({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="e.g. Grocery shopping at D-Mart"
-            className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-zinc-600"
+            className="glass-surface mt-1.5 w-full rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-all duration-200 focus:ring-2 focus:ring-cyan-500/30"
             required
           />
         </div>
@@ -106,7 +106,7 @@ export default function AddTransactionModal({
             placeholder="0.00"
             min="0"
             step="0.01"
-            className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-zinc-600"
+            className="glass-surface mt-1.5 w-full rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-all duration-200 focus:ring-2 focus:ring-cyan-500/30"
             required
           />
         </div>
@@ -142,13 +142,13 @@ export default function AddTransactionModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 rounded-lg border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
+            className="glass-surface flex-1 rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-300 transition-all duration-200 hover:bg-white/5"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="flex-1 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
+            className="flex-1 rounded-xl bg-linear-to-r from-cyan-500 to-emerald-500 px-4 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:opacity-90"
           >
             Add transaction
           </button>

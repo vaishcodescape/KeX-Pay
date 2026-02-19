@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 
 export default function Dropdown({
   trigger,
@@ -28,16 +29,23 @@ export default function Dropdown({
       <div onClick={() => setOpen(!open)} className="cursor-pointer">
         {trigger}
       </div>
-      {open && (
-        <div
-          className={`absolute top-full z-50 mt-2 min-w-[200px] rounded-xl border border-zinc-800 bg-zinc-900 p-1.5 shadow-xl ${
-            align === "right" ? "right-0" : "left-0"
-          }`}
-          onClick={() => setOpen(false)}
-        >
-          {children}
-        </div>
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            transition={{ duration: 0.15 }}
+            className={`glass-surface-strong absolute top-full z-50 mt-2 min-w-[200px] rounded-xl p-1.5 shadow-2xl ${
+              align === "right" ? "right-0" : "left-0"
+            }`}
+            style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05)" }}
+            onClick={() => setOpen(false)}
+          >
+            {children}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -55,10 +63,10 @@ export function DropdownItem({
     <button
       type="button"
       onClick={onClick}
-      className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+      className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-all duration-200 cursor-pointer ${
         danger
           ? "text-red-400 hover:bg-red-950/40"
-          : "text-zinc-300 hover:bg-zinc-800 hover:text-white"
+          : "text-zinc-300 hover:bg-white/5 hover:text-white"
       }`}
     >
       {children}
